@@ -24,8 +24,8 @@ const App = () => (
         <ClerkLoaded>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login/*" element={<Login />} />
+            <Route path="/signup/*" element={<SignUp />} />
             <Route path="/dashboard" element={
               <RouteGuard>
                 <Dashboard />

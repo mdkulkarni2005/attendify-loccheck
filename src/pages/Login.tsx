@@ -23,6 +23,7 @@ const Login = () => {
           routing="path" 
           path="/login"
           signUpUrl="/signup"
+          redirectUrl="/dashboard"
           appearance={{
             elements: {
               formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
