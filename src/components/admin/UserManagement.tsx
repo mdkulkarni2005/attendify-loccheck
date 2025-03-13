@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserRole } from '@/types';
 import { 
   Users, 
@@ -24,7 +23,7 @@ type User = {
   phoneNumber?: string;
 };
 
-const UserManagement = () => {
+const UserManagement = ({ filterRole }: UserManagementProps) => {
   const { toast } = useToast();
   const [users, setUsers] = useState<User[]>([
     { 
@@ -75,10 +74,9 @@ const UserManagement = () => {
     });
   };
   
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = filterRole 
+    ? users.filter(user => user.role === filterRole)
+    : users;
 
   return (
     <div className="space-y-4">

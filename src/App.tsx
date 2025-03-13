@@ -13,6 +13,9 @@ import Attendance from "./pages/Attendance";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 import RouteGuard from "./components/auth/RouteGuard";
+import Users from "./pages/admin/Users";
+import Classes from "./pages/admin/Classes";
+import Reports from "./pages/admin/Reports";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,21 @@ const App = () => (
             <Route path="/admin" element={
               <RouteGuard allowedRoles={['admin']}>
                 <AdminPanel />
+              </RouteGuard>
+            } />
+            <Route path="/users" element={
+              <RouteGuard allowedRoles={['admin']}>
+                <Users />
+              </RouteGuard>
+            } />
+            <Route path="/classes" element={
+              <RouteGuard>
+                <Classes />
+              </RouteGuard>
+            } />
+            <Route path="/reports" element={
+              <RouteGuard allowedRoles={['admin']}>
+                <Reports />
               </RouteGuard>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
