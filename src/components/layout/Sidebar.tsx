@@ -12,6 +12,7 @@ import {
   FileSpreadsheet,
   Settings,
   LogOut,
+  Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserRole } from '@/types';
@@ -40,17 +41,18 @@ const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
 
   const adminNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: <Table className="h-5 w-5" /> },
+    { href: '/admin', label: 'Admin Panel', icon: <Shield className="h-5 w-5" /> },
     { href: '/users', label: 'Users', icon: <Users className="h-5 w-5" /> },
     { href: '/classes', label: 'Classes', icon: <BookOpen className="h-5 w-5" /> },
     { href: '/reports', label: 'Reports', icon: <FileSpreadsheet className="h-5 w-5" /> },
   ];
 
   const navItems = 
-    userRole === 'teacher' 
-      ? teacherNavItems 
-      : userRole === 'student' 
-        ? studentNavItems 
-        : adminNavItems;
+    userRole === 'admin'
+      ? adminNavItems
+      : userRole === 'teacher' 
+        ? teacherNavItems 
+        : studentNavItems;
 
   const handleSignOut = async () => {
     await signOut();

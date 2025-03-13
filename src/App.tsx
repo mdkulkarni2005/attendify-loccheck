@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Attendance from "./pages/Attendance";
+import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 import RouteGuard from "./components/auth/RouteGuard";
 
@@ -34,6 +35,11 @@ const App = () => (
             <Route path="/attendance" element={
               <RouteGuard>
                 <Attendance />
+              </RouteGuard>
+            } />
+            <Route path="/admin" element={
+              <RouteGuard allowedRoles={['admin']}>
+                <AdminPanel />
               </RouteGuard>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
