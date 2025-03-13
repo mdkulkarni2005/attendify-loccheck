@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { SignIn } from "@clerk/clerk-react";
+import { SignUp } from '@clerk/clerk-react';
 import { useAuth } from '@/hooks/use-auth';
 
-const Login = () => {
+const SignUpPage = () => {
   const { isSignedIn } = useAuth();
 
   // If already logged in, redirect to dashboard
@@ -19,10 +19,10 @@ const Login = () => {
         <p className="text-muted-foreground">Automated Attendance Management System</p>
       </div>
       <div className="w-full max-w-md">
-        <SignIn 
+        <SignUp 
           routing="path" 
-          path="/login"
-          signUpUrl="/signup"
+          path="/signup"
+          signInUrl="/login"
           appearance={{
             elements: {
               formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
@@ -35,4 +35,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUpPage;

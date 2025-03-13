@@ -1,14 +1,17 @@
 
 import React, { useState } from 'react';
 import { Menu, Bell, User } from 'lucide-react';
+import { UserButton } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useAuth } from '@/hooks/use-auth';
 
 const Navbar = () => {
   const isMobile = useIsMobile();
+  const { userRole } = useAuth();
   const [notifications, setNotifications] = useState<string[]>([
     'Attendance session started for CS101',
     'You have been marked present in MAT201'
@@ -27,7 +30,7 @@ const Navbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="p-0">
-                <Sidebar />
+                <Sidebar userRole={userRole} />
               </SheetContent>
             </Sheet>
           )}
@@ -70,10 +73,14 @@ const Navbar = () => {
             </PopoverContent>
           </Popover>
 
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
-            <span className="sr-only">Profile</span>
-          </Button>
+          <UserButton 
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                userButtonAvatarBox: "h-8 w-8"
+              }
+            }}
+          />
         </div>
       </div>
     </header>

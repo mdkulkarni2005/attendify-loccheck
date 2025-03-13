@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useClerk } from '@clerk/clerk-react';
 import {
   Users,
   Calendar,
@@ -13,10 +14,15 @@ import {
   LogOut,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { UserRole } from '@/types';
 
-const Sidebar = () => {
-  // Mock user role - in a real app, this would come from authentication
-  const userRole = 'teacher'; // or 'student' or 'clerk'
+interface SidebarProps {
+  userRole?: UserRole;
+}
+
+const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
+  const { signOut } = useClerk();
+  const navigate = useNavigate();
 
   const teacherNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: <Table className="h-5 w-5" /> },
@@ -32,7 +38,7 @@ const Sidebar = () => {
     { href: '/attendance', label: 'Attendance', icon: <CheckSquare className="h-5 w-5" /> },
   ];
 
-  const clerkNavItems = [
+  const adminNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: <Table className="h-5 w-5" /> },
     { href: '/users', label: 'Users', icon: <Users className="h-5 w-5" /> },
     { href: '/classes', label: 'Classes', icon: <BookOpen className="h-5 w-5" /> },
@@ -44,7 +50,12 @@ const Sidebar = () => {
       ? teacherNavItems 
       : userRole === 'student' 
         ? studentNavItems 
-        : clerkNavItems;
+        : adminNavItems;
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <div className="w-64 bg-sidebar h-full flex flex-col border-r">
@@ -77,7 +88,11 @@ const Sidebar = () => {
             <Settings className="h-5 w-5" />
             Settings
           </Link>
-          <Button variant="ghost" className="w-full justify-start px-3 py-2">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start px-3 py-2"
+            onClick={handleSignOut}
+          >
             <LogOut className="mr-3 h-5 w-5" />
             Logout
           </Button>

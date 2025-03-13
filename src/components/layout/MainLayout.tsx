@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/use-auth';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,10 +11,11 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const isMobile = useIsMobile();
+  const { userRole } = useAuth();
 
   return (
     <div className="h-screen w-full flex overflow-hidden bg-muted/20">
-      {!isMobile && <Sidebar />}
+      {!isMobile && <Sidebar userRole={userRole} />}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />
         <main className="flex-1 overflow-auto p-4 md:p-6">
