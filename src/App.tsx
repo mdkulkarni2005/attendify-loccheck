@@ -16,6 +16,7 @@ import RouteGuard from "./components/auth/RouteGuard";
 import Users from "./pages/admin/Users";
 import Classes from "./pages/admin/Classes";
 import Reports from "./pages/admin/Reports";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,11 @@ const App = () => (
             <Route path="/reports" element={
               <RouteGuard allowedRoles={['admin']}>
                 <Reports />
+              </RouteGuard>
+            } />
+            <Route path="/settings" element={
+              <RouteGuard>
+                <Settings />
               </RouteGuard>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
