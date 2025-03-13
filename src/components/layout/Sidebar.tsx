@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useClerk } from '@clerk/clerk-react';
 import {
@@ -24,6 +24,7 @@ interface SidebarProps {
 const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
   const { signOut } = useClerk();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const teacherNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: <Table className="h-5 w-5" /> },
@@ -72,7 +73,7 @@ const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
               to={item.href}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-all hover:text-sidebar-primary",
-                item.href === '/dashboard' && "bg-sidebar-accent text-sidebar-primary"
+                location.pathname === item.href && "bg-sidebar-accent text-sidebar-primary"
               )}
             >
               {item.icon}

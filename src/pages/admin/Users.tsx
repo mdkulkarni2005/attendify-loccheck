@@ -3,7 +3,8 @@ import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users as UsersIcon } from 'lucide-react';
+import { Users as UsersIcon, UserPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import UserManagement from '@/components/admin/UserManagement';
 
 const Users = () => {
@@ -20,6 +21,9 @@ const Users = () => {
               Manage users and their roles in the system
             </p>
           </div>
+          <Button>
+            <UserPlus className="mr-2 h-4 w-4" /> Add New User
+          </Button>
         </div>
         
         <Tabs defaultValue="all" className="w-full">
