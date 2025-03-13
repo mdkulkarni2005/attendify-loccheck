@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -20,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { UserRole } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface SidebarProps {
   userRole?: UserRole;
@@ -37,6 +37,7 @@ const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems: NavItem[] = [
@@ -90,8 +91,25 @@ const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
   );
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      toast({
+        title: "Logging out",
+        description: "You are being signed out of the system...",
+      });
+      
+      // Sign out using Clerk
+      await signOut();
+      
+      // Redirect to login page
+      navigate('/login');
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Error signing out",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Check if current path is active or if it's a parent route

@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Plus, School, Home, Search, User, BookOpenCheck } from 'lucide-react';
+import { BookOpen, Plus, School, Home, User, BookOpenCheck, UsersRound, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SearchInput from '@/components/ui/search-input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from '@/hooks/use-toast';
 
 interface ClassItem {
   id: string;
@@ -15,9 +17,12 @@ interface ClassItem {
   department: string;
   room: string;
   teacher: string;
+  students?: number;
+  schedule?: string;
 }
 
 const Classes = () => {
+  const { toast } = useToast();
   const [classes, setClasses] = useState<ClassItem[]>(
     Array.from({ length: 6 }).map((_, i) => ({
       id: `class-${i}`,
@@ -25,13 +30,16 @@ const Classes = () => {
       courseCode: `CS10${i}`,
       department: 'Computer Science',
       room: `Room ${100 + i}`,
-      teacher: ['John Doe', 'Jane Smith', 'Robert Johnson'][i % 3]
+      teacher: ['John Doe', 'Jane Smith', 'Robert Johnson'][i % 3],
+      students: Math.floor(Math.random() * 30) + 20,
+      schedule: ['Mon, Wed, Fri 10:00 - 11:30', 'Tue, Thu 14:00 - 15:30', 'Mon, Wed 13:00 - 14:30'][i % 3]
     }))
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredClasses, setFilteredClasses] = useState<ClassItem[]>(classes);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedTeacher, setSelectedTeacher] = useState<string>('');
+  const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
 
   useEffect(() => {
     let result = classes;
@@ -83,6 +91,24 @@ const Classes = () => {
     setSelectedTeacher(value);
     setSearchTerm('');
     setSelectedDepartment('');
+  };
+
+  const handleManageClass = (cls: ClassItem) => {
+    setSelectedClass(cls);
+  };
+
+  const handleUpdateClass = () => {
+    toast({
+      title: "Class Updated",
+      description: `${selectedClass?.name} has been updated successfully`,
+    });
+  };
+
+  const handleStartAttendance = () => {
+    toast({
+      title: "Attendance Started",
+      description: `Attendance session started for ${selectedClass?.name}`,
+    });
   };
 
   return (
@@ -141,10 +167,81 @@ const Classes = () => {
                           <User className="h-4 w-4 mr-2 text-muted-foreground" />
                           <span>{cls.teacher}</span>
                         </div>
+                        <div className="flex items-center">
+                          <UsersRound className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <span>{cls.students} Students</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <span>{cls.schedule}</span>
+                        </div>
                       </div>
                     </CardContent>
                     <CardFooter className="pt-0">
-                      <Button variant="outline" size="sm" className="w-full">Manage</Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => handleManageClass(cls)}
+                          >
+                            Manage
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Manage Class: {selectedClass?.name}</DialogTitle>
+                            <DialogDescription>
+                              Course Code: {selectedClass?.courseCode}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-1 gap-6">
+                              <div>
+                                <h3 className="font-medium mb-2">Class Details</h3>
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex items-center">
+                                    <School className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Department: {selectedClass?.department}</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <Home className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Room: {selectedClass?.room}</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Teacher: {selectedClass?.teacher}</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <UsersRound className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Students: {selectedClass?.students}</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Schedule: {selectedClass?.schedule}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+                            <Button
+                              variant="secondary"
+                              onClick={handleStartAttendance}
+                              className="sm:w-auto w-full"
+                            >
+                              Start Attendance
+                            </Button>
+                            <Button 
+                              onClick={handleUpdateClass}
+                              className="sm:w-auto w-full"
+                            >
+                              Update Class
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </CardFooter>
                   </Card>
                 ))
@@ -200,7 +297,62 @@ const Classes = () => {
                           </div>
                         </CardContent>
                         <CardFooter className="pt-0">
-                          <Button variant="outline" size="sm" className="w-full">Manage</Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => handleManageClass(cls)}
+                              >
+                                Manage
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                              <DialogHeader>
+                                <DialogTitle>Manage Class: {selectedClass?.name}</DialogTitle>
+                                <DialogDescription>
+                                  Course Code: {selectedClass?.courseCode}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-1 gap-6">
+                                  <div>
+                                    <h3 className="font-medium mb-2">Class Details</h3>
+                                    <div className="space-y-2 text-sm">
+                                      <div className="flex items-center">
+                                        <School className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Department: {selectedClass?.department}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <Home className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Room: {selectedClass?.room}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Teacher: {selectedClass?.teacher}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <DialogFooter className="flex flex-col sm:flex-row gap-2">
+                                <Button
+                                  variant="secondary"
+                                  onClick={handleStartAttendance}
+                                  className="sm:w-auto w-full"
+                                >
+                                  Start Attendance
+                                </Button>
+                                <Button 
+                                  onClick={handleUpdateClass}
+                                  className="sm:w-auto w-full"
+                                >
+                                  Update Class
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         </CardFooter>
                       </Card>
                     ))}
@@ -254,7 +406,62 @@ const Classes = () => {
                           </div>
                         </CardContent>
                         <CardFooter className="pt-0">
-                          <Button variant="outline" size="sm" className="w-full">Manage</Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => handleManageClass(cls)}
+                              >
+                                Manage
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                              <DialogHeader>
+                                <DialogTitle>Manage Class: {selectedClass?.name}</DialogTitle>
+                                <DialogDescription>
+                                  Course Code: {selectedClass?.courseCode}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-1 gap-6">
+                                  <div>
+                                    <h3 className="font-medium mb-2">Class Details</h3>
+                                    <div className="space-y-2 text-sm">
+                                      <div className="flex items-center">
+                                        <School className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Department: {selectedClass?.department}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <Home className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Room: {selectedClass?.room}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>Teacher: {selectedClass?.teacher}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <DialogFooter className="flex flex-col sm:flex-row gap-2">
+                                <Button
+                                  variant="secondary"
+                                  onClick={handleStartAttendance}
+                                  className="sm:w-auto w-full"
+                                >
+                                  Start Attendance
+                                </Button>
+                                <Button 
+                                  onClick={handleUpdateClass}
+                                  className="sm:w-auto w-full"
+                                >
+                                  Update Class
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         </CardFooter>
                       </Card>
                     ))}

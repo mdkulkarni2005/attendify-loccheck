@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { FileText, Download, User, Calendar, BarChart, AlertCircle } from 'lucid
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import { 
   BarChart as ReChartsBarChart,
   Bar,
@@ -20,6 +20,7 @@ import {
 
 const Reports = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<string>('');
   
@@ -49,16 +50,32 @@ const Reports = () => {
   ];
 
   const handleGenerateReport = () => {
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    
+    // Show toast notification
     toast({
       title: "Report Generated",
       description: "Attendance report has been generated and is ready for download",
     });
+    
+    // Show toast notification for email
+    toast({
+      title: "Report Sent",
+      description: `The report has been sent to ${userEmail || 'your registered email'}`,
+    });
   };
 
   const handleExportReport = () => {
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    
     toast({
       title: "Report Exported",
       description: "Attendance report has been exported successfully",
+    });
+    
+    toast({
+      title: "Report Sent",
+      description: `The report has been sent to ${userEmail || 'your registered email'}`,
     });
   };
 
