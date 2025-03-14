@@ -1,3 +1,4 @@
+
 import { AttendanceSessionModel, AttendanceRecordModel } from '@/models';
 import { IAttendanceSession } from '@/models/attendance-session.model';
 import { IAttendanceRecord } from '@/models/attendance-record.model';
@@ -8,27 +9,27 @@ import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
 // Session operations
 export async function createAttendanceSession(sessionData: Partial<IAttendanceSession>) {
   await connectToDatabase();
-  return await AttendanceSessionModel.create(sessionData) as IAttendanceSession;
+  return await (AttendanceSessionModel.create(sessionData) as Promise<IAttendanceSession>);
 }
 
 export async function getAttendanceSessionById(id: string) {
   await connectToDatabase();
-  return await AttendanceSessionModel.findById(id) as IAttendanceSession | null;
+  return await (AttendanceSessionModel.findById(id) as any) as IAttendanceSession | null;
 }
 
 export async function getActiveSessionsByTeacher(teacherId: string) {
   await connectToDatabase();
-  return await AttendanceSessionModel.find({ 
+  return await (AttendanceSessionModel.find({ 
     teacher: new mongoose.Types.ObjectId(teacherId),
     status: 'active'
-  }).sort({ date: -1 }) as IAttendanceSession[];
+  }).sort({ date: -1 }) as any) as IAttendanceSession[];
 }
 
 export async function getAttendanceSessionsByClass(classId: string) {
   await connectToDatabase();
-  return await AttendanceSessionModel.find({ 
+  return await (AttendanceSessionModel.find({ 
     class: new mongoose.Types.ObjectId(classId) 
-  }).sort({ date: -1 }) as IAttendanceSession[];
+  }).sort({ date: -1 }) as any) as IAttendanceSession[];
 }
 
 export async function getTodaysSessions() {
@@ -38,31 +39,31 @@ export async function getTodaysSessions() {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  return await AttendanceSessionModel.find({
+  return await (AttendanceSessionModel.find({
     date: { $gte: today, $lt: tomorrow }
-  }).sort({ startTime: 1 }) as IAttendanceSession[];
+  }).sort({ startTime: 1 }) as any) as IAttendanceSession[];
 }
 
 export async function getSessionsByDateRange(startDate: Date, endDate: Date) {
   await connectToDatabase();
-  return await AttendanceSessionModel.find({
+  return await (AttendanceSessionModel.find({
     date: { $gte: startDate, $lte: endDate }
-  }).sort({ date: 1, startTime: 1 }) as IAttendanceSession[];
+  }).sort({ date: 1, startTime: 1 }) as any) as IAttendanceSession[];
 }
 
 export async function updateAttendanceSession(sessionId: string, updateData: Partial<IAttendanceSession>) {
   await connectToDatabase();
-  return await AttendanceSessionModel.findByIdAndUpdate(sessionId, updateData, { new: true }) as IAttendanceSession | null;
+  return await (AttendanceSessionModel.findByIdAndUpdate(sessionId, updateData, { new: true }) as any) as IAttendanceSession | null;
 }
 
 export async function deleteAttendanceSession(sessionId: string) {
   await connectToDatabase();
   
   // First delete all associated attendance records
-  await AttendanceRecordModel.deleteMany({ session: new mongoose.Types.ObjectId(sessionId) });
+  await (AttendanceRecordModel.deleteMany({ session: new mongoose.Types.ObjectId(sessionId) }) as any);
   
   // Then delete the session
-  return await AttendanceSessionModel.findByIdAndDelete(sessionId) as IAttendanceSession | null;
+  return await (AttendanceSessionModel.findByIdAndDelete(sessionId) as any) as IAttendanceSession | null;
 }
 
 export async function completeAttendanceSession(sessionId: string, teacherLocation?: {
@@ -80,27 +81,27 @@ export async function completeAttendanceSession(sessionId: string, teacherLocati
     };
   }
   
-  return await AttendanceSessionModel.findByIdAndUpdate(
+  return await (AttendanceSessionModel.findByIdAndUpdate(
     sessionId,
     updateData,
     { new: true }
-  ) as IAttendanceSession | null;
+  ) as any) as IAttendanceSession | null;
 }
 
 // Attendance Record operations
 export async function createAttendanceRecord(recordData: Partial<IAttendanceRecord>) {
   await connectToDatabase();
-  return await AttendanceRecordModel.create(recordData) as IAttendanceRecord;
+  return await (AttendanceRecordModel.create(recordData) as Promise<IAttendanceRecord>);
 }
 
 export async function getAttendanceRecordById(id: string) {
   await connectToDatabase();
-  return await AttendanceRecordModel.findById(id) as IAttendanceRecord | null;
+  return await (AttendanceRecordModel.findById(id) as any) as IAttendanceRecord | null;
 }
 
 export async function getAttendanceRecordsBySession(sessionId: string) {
   await connectToDatabase();
-  return await AttendanceRecordModel.find({ session: new mongoose.Types.ObjectId(sessionId) }) as IAttendanceRecord[];
+  return await (AttendanceRecordModel.find({ session: new mongoose.Types.ObjectId(sessionId) }) as any) as IAttendanceRecord[];
 }
 
 export async function getStudentAttendanceRecords(studentId: string, classId?: string) {
@@ -110,27 +111,27 @@ export async function getStudentAttendanceRecords(studentId: string, classId?: s
   
   if (classId) {
     // Get all sessions for this class
-    const sessions = await AttendanceSessionModel.find({ 
+    const sessions = await (AttendanceSessionModel.find({ 
       class: new mongoose.Types.ObjectId(classId) 
-    }).select('_id') as any[];
+    }).select('_id') as any) as any[];
     
     const sessionIds = sessions.map(s => s._id);
     query.session = { $in: sessionIds };
   }
   
-  return await AttendanceRecordModel.find(query)
+  return await (AttendanceRecordModel.find(query)
     .populate('session')
-    .sort({ 'session.date': -1 }) as any[];
+    .sort({ 'session.date': -1 }) as any);
 }
 
 export async function getAttendanceStatsByClass(classId: string) {
   await connectToDatabase();
   
   // Get all sessions for this class
-  const sessions = await AttendanceSessionModel.find({ 
+  const sessions = await (AttendanceSessionModel.find({ 
     class: new mongoose.Types.ObjectId(classId),
     status: 'completed'
-  }) as IAttendanceSession[];
+  }) as any) as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
@@ -197,17 +198,17 @@ export async function getMonthlyAttendanceReport(month?: number, year?: number) 
   const endDate = endOfMonth(reportDate);
   
   // Get all sessions in the month
-  const sessions = await AttendanceSessionModel.find({
+  const sessions = await (AttendanceSessionModel.find({
     date: { $gte: startDate, $lte: endDate },
     status: 'completed'
-  }).sort({ date: 1 }) as IAttendanceSession[];
+  }).sort({ date: 1 }) as any) as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
   // Get all attendance records for these sessions
-  const records = await AttendanceRecordModel.find({
+  const records = await (AttendanceRecordModel.find({
     session: { $in: sessionIds }
-  }).populate('session').populate('student') as any[];
+  }).populate('session').populate('student') as any);
   
   return {
     month: reportDate.getMonth(),
@@ -223,10 +224,10 @@ export async function getLowAttendanceStudents(threshold = 75) {
   // Get sessions from the last 3 months
   const threeMonthsAgo = subMonths(new Date(), 3);
   
-  const sessions = await AttendanceSessionModel.find({
+  const sessions = await (AttendanceSessionModel.find({
     date: { $gte: threeMonthsAgo },
     status: 'completed'
-  }) as IAttendanceSession[];
+  }) as any) as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
@@ -275,7 +276,7 @@ export async function getLowAttendanceStudents(threshold = 75) {
 
 export async function updateAttendanceRecord(recordId: string, updateData: Partial<IAttendanceRecord>) {
   await connectToDatabase();
-  return await AttendanceRecordModel.findByIdAndUpdate(recordId, updateData, { new: true }) as IAttendanceRecord | null;
+  return await (AttendanceRecordModel.findByIdAndUpdate(recordId, updateData, { new: true }) as any) as IAttendanceRecord | null;
 }
 
 export async function markAttendance(
@@ -291,7 +292,7 @@ export async function markAttendance(
 ) {
   await connectToDatabase();
   
-  const session = await AttendanceSessionModel.findById(sessionId) as IAttendanceSession | null;
+  const session = await (AttendanceSessionModel.findById(sessionId) as any) as IAttendanceSession | null;
   if (!session) {
     throw new Error('Attendance session not found');
   }
@@ -301,10 +302,10 @@ export async function markAttendance(
   }
   
   // Check if a record already exists
-  const existingRecord = await AttendanceRecordModel.findOne({
+  const existingRecord = await (AttendanceRecordModel.findOne({
     session: new mongoose.Types.ObjectId(sessionId),
     student: new mongoose.Types.ObjectId(studentId)
-  }) as IAttendanceRecord | null;
+  }) as any) as IAttendanceRecord | null;
   
   if (existingRecord) {
     // Update existing record
@@ -317,11 +318,11 @@ export async function markAttendance(
       };
     }
     
-    return await AttendanceRecordModel.findByIdAndUpdate(
+    return await (AttendanceRecordModel.findByIdAndUpdate(
       existingRecord._id,
       updateData,
       { new: true }
-    ) as IAttendanceRecord;
+    ) as any) as IAttendanceRecord;
   } else {
     // Create new record
     const recordData: any = {
@@ -345,15 +346,15 @@ export async function getAttendanceByDateRange(startDate: Date, endDate: Date) {
   await connectToDatabase();
   
   // Get all sessions in the date range
-  const sessions = await AttendanceSessionModel.find({
+  const sessions = await (AttendanceSessionModel.find({
     date: { $gte: startDate, $lte: endDate },
     status: 'completed'
-  }) as IAttendanceSession[];
+  }) as any) as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
   // Get all attendance records for these sessions
-  return await AttendanceRecordModel.find({
+  return await (AttendanceRecordModel.find({
     session: { $in: sessionIds }
-  }).populate('session').populate('student') as any[];
+  }).populate('session').populate('student') as any);
 }
