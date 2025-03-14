@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 
 export async function createClass(classData: Partial<IClass>) {
   await connectToDatabase();
-  return await (ClassModel.create(classData) as Promise<IClass>);
+  return await (ClassModel.create(classData) as any) as IClass;
 }
 
 export async function getClassById(id: string) {

@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/lib/db';
 export async function createUser(userData: Partial<IUser>) {
   await connectToDatabase();
   // Use type assertion to bypass TypeScript's issue with Mongoose method signatures
-  return await (UserModel.create(userData) as Promise<IUser>);
+  return await (UserModel.create(userData) as any) as IUser;
 }
 
 export async function getUserByClerkId(clerkId: string) {
