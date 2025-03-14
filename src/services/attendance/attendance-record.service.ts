@@ -7,17 +7,17 @@ import mongoose from 'mongoose';
 
 export async function createAttendanceRecord(recordData: Partial<IAttendanceRecord>) {
   await connectToDatabase();
-  return await (AttendanceRecordModel.create(recordData) as any) as IAttendanceRecord;
+  return await AttendanceRecordModel.create(recordData) as unknown as IAttendanceRecord;
 }
 
 export async function getAttendanceRecordById(id: string) {
   await connectToDatabase();
-  return await (AttendanceRecordModel.findById(id) as any) as IAttendanceRecord | null;
+  return await AttendanceRecordModel.findById(id) as unknown as IAttendanceRecord | null;
 }
 
 export async function getAttendanceRecordsBySession(sessionId: string) {
   await connectToDatabase();
-  return await (AttendanceRecordModel.find({ session: new mongoose.Types.ObjectId(sessionId) }) as any) as IAttendanceRecord[];
+  return await AttendanceRecordModel.find({ session: new mongoose.Types.ObjectId(sessionId) }) as unknown as IAttendanceRecord[];
 }
 
 export async function getStudentAttendanceRecords(studentId: string, classId?: string) {
@@ -27,22 +27,22 @@ export async function getStudentAttendanceRecords(studentId: string, classId?: s
   
   if (classId) {
     // Get all sessions for this class
-    const sessions = await (AttendanceSessionModel.find({ 
+    const sessions = await AttendanceSessionModel.find({ 
       class: new mongoose.Types.ObjectId(classId) 
-    }).select('_id') as any) as any[];
+    }).select('_id') as unknown as any[];
     
     const sessionIds = sessions.map(s => s._id);
     query.session = { $in: sessionIds };
   }
   
-  return await (AttendanceRecordModel.find(query)
+  return await AttendanceRecordModel.find(query)
     .populate('session')
-    .sort({ 'session.date': -1 }) as any);
+    .sort({ 'session.date': -1 }) as unknown as any;
 }
 
 export async function updateAttendanceRecord(recordId: string, updateData: Partial<IAttendanceRecord>) {
   await connectToDatabase();
-  return await (AttendanceRecordModel.findByIdAndUpdate(recordId, updateData, { new: true }) as any) as IAttendanceRecord | null;
+  return await AttendanceRecordModel.findByIdAndUpdate(recordId, updateData, { new: true }) as unknown as IAttendanceRecord | null;
 }
 
 export async function markAttendance(
@@ -58,7 +58,7 @@ export async function markAttendance(
 ) {
   await connectToDatabase();
   
-  const session = await (AttendanceSessionModel.findById(sessionId) as any) as IAttendanceSession | null;
+  const session = await AttendanceSessionModel.findById(sessionId) as unknown as IAttendanceSession | null;
   if (!session) {
     throw new Error('Attendance session not found');
   }
@@ -68,10 +68,10 @@ export async function markAttendance(
   }
   
   // Check if a record already exists
-  const existingRecord = await (AttendanceRecordModel.findOne({
+  const existingRecord = await AttendanceRecordModel.findOne({
     session: new mongoose.Types.ObjectId(sessionId),
     student: new mongoose.Types.ObjectId(studentId)
-  }) as any) as IAttendanceRecord | null;
+  }) as unknown as IAttendanceRecord | null;
   
   if (existingRecord) {
     // Update existing record
@@ -84,11 +84,11 @@ export async function markAttendance(
       };
     }
     
-    return await (AttendanceRecordModel.findByIdAndUpdate(
+    return await AttendanceRecordModel.findByIdAndUpdate(
       existingRecord._id,
       updateData,
       { new: true }
-    ) as any) as IAttendanceRecord;
+    ) as unknown as IAttendanceRecord;
   } else {
     // Create new record
     const recordData: any = {

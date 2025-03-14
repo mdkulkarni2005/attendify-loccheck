@@ -9,10 +9,10 @@ export async function getAttendanceStatsByClass(classId: string) {
   await connectToDatabase();
   
   // Get all sessions for this class
-  const sessions = await (AttendanceSessionModel.find({ 
+  const sessions = await AttendanceSessionModel.find({ 
     class: new mongoose.Types.ObjectId(classId),
     status: 'completed'
-  }) as any) as IAttendanceSession[];
+  }) as unknown as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
@@ -79,17 +79,17 @@ export async function getMonthlyAttendanceReport(month?: number, year?: number) 
   const endDate = endOfMonth(reportDate);
   
   // Get all sessions in the month
-  const sessions = await (AttendanceSessionModel.find({
+  const sessions = await AttendanceSessionModel.find({
     date: { $gte: startDate, $lte: endDate },
     status: 'completed'
-  }).sort({ date: 1 }) as any) as IAttendanceSession[];
+  }).sort({ date: 1 }) as unknown as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
   // Get all attendance records for these sessions
-  const records = await (AttendanceRecordModel.find({
+  const records = await AttendanceRecordModel.find({
     session: { $in: sessionIds }
-  }).populate('session').populate('student') as any);
+  }).populate('session').populate('student') as unknown as any;
   
   return {
     month: reportDate.getMonth(),
@@ -105,10 +105,10 @@ export async function getLowAttendanceStudents(threshold = 75) {
   // Get sessions from the last 3 months
   const threeMonthsAgo = subMonths(new Date(), 3);
   
-  const sessions = await (AttendanceSessionModel.find({
+  const sessions = await AttendanceSessionModel.find({
     date: { $gte: threeMonthsAgo },
     status: 'completed'
-  }) as any) as IAttendanceSession[];
+  }) as unknown as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
@@ -159,15 +159,15 @@ export async function getAttendanceByDateRange(startDate: Date, endDate: Date) {
   await connectToDatabase();
   
   // Get all sessions in the date range
-  const sessions = await (AttendanceSessionModel.find({
+  const sessions = await AttendanceSessionModel.find({
     date: { $gte: startDate, $lte: endDate },
     status: 'completed'
-  }) as any) as IAttendanceSession[];
+  }) as unknown as IAttendanceSession[];
   
   const sessionIds = sessions.map(s => s._id);
   
   // Get all attendance records for these sessions
-  return await (AttendanceRecordModel.find({
+  return await AttendanceRecordModel.find({
     session: { $in: sessionIds }
-  }).populate('session').populate('student') as any);
+  }).populate('session').populate('student') as unknown as any;
 }
