@@ -6,42 +6,42 @@ import mongoose from 'mongoose';
 
 export async function createClass(classData: Partial<IClass>) {
   await connectToDatabase();
-  return await ClassModel.create(classData as any);
+  return await ClassModel.create(classData) as IClass;
 }
 
 export async function getClassById(id: string) {
   await connectToDatabase();
-  return await ClassModel.findById(id as any);
+  return await ClassModel.findById(id) as IClass | null;
 }
 
 export async function getAllClasses() {
   await connectToDatabase();
-  return await ClassModel.find({} as any).sort({ department: 1, name: 1 });
+  return await ClassModel.find({}).sort({ department: 1, name: 1 }) as IClass[];
 }
 
 export async function getClassesByTeacher(teacherId: string) {
   await connectToDatabase();
-  return await ClassModel.find({ teacher: new mongoose.Types.ObjectId(teacherId) } as any).sort({ name: 1 });
+  return await ClassModel.find({ teacher: new mongoose.Types.ObjectId(teacherId) }).sort({ name: 1 }) as IClass[];
 }
 
 export async function getClassesByDepartment(department: string) {
   await connectToDatabase();
-  return await ClassModel.find({ department } as any).sort({ name: 1 });
+  return await ClassModel.find({ department }).sort({ name: 1 }) as IClass[];
 }
 
 export async function updateClass(classId: string, updateData: Partial<IClass>) {
   await connectToDatabase();
-  return await ClassModel.findByIdAndUpdate(classId, updateData as any, { new: true });
+  return await ClassModel.findByIdAndUpdate(classId, updateData, { new: true }) as IClass | null;
 }
 
 export async function deleteClass(classId: string) {
   await connectToDatabase();
-  return await ClassModel.findByIdAndDelete(classId as any);
+  return await ClassModel.findByIdAndDelete(classId) as IClass | null;
 }
 
 export async function getClassByCourseCode(courseCode: string) {
   await connectToDatabase();
-  return await ClassModel.findOne({ courseCode } as any);
+  return await ClassModel.findOne({ courseCode }) as IClass | null;
 }
 
 export async function updateClassLocation(classId: string, location: {
@@ -52,13 +52,13 @@ export async function updateClassLocation(classId: string, location: {
   await connectToDatabase();
   return await ClassModel.findByIdAndUpdate(
     classId,
-    { location } as any,
+    { location },
     { new: true }
-  );
+  ) as IClass | null;
 }
 
 export async function bulkCreateClasses(classes: Partial<IClass>[]) {
   await connectToDatabase();
-  // Convert partial classes to any to bypass type checking
-  return await ClassModel.insertMany(classes as any[]);
+  // Cast to any array to bypass type checking
+  return await ClassModel.insertMany(classes as any[]) as IClass[];
 }
