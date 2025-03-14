@@ -43,18 +43,14 @@ const ClassCard = ({ cls, onManage }: ClassCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="pt-0">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full"
-              onClick={() => onManage(cls)}
-            >
-              Manage
-            </Button>
-          </DialogTrigger>
-        </Dialog>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full"
+          onClick={() => onManage(cls)}
+        >
+          Manage
+        </Button>
       </CardFooter>
     </Card>
   );

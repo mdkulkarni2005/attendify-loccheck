@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LocationCheck from './LocationCheck';
 import { AttendanceSession as AttendanceSessionType } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface AttendanceSessionProps {
   session: AttendanceSessionType;
@@ -21,6 +22,7 @@ const AttendanceSession: React.FC<AttendanceSessionProps> = ({
   isTeacher,
   onEndSession
 }) => {
+  const { toast } = useToast();
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
   const [attendanceStatus, setAttendanceStatus] = useState<'pending' | 'present' | 'absent' | 'proxy'>('pending');
   const [studentsPresent, setStudentsPresent] = useState(0);
@@ -42,6 +44,18 @@ const AttendanceSession: React.FC<AttendanceSessionProps> = ({
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  // Function to handle sending emails (mock)
+  const sendAttendanceEmail = () => {
+    return new Promise<void>((resolve) => {
+      // In a real app, this would connect to an email service
+      console.log("Sending email notification about attendance");
+      setTimeout(() => {
+        console.log("Email sent successfully");
+        resolve();
+      }, 1000);
+    });
   };
 
   // Simulate timer countdown
@@ -77,13 +91,40 @@ const AttendanceSession: React.FC<AttendanceSessionProps> = ({
     setShowLocationCheck(true);
   };
 
-  const handleLocationVerified = (isValid: boolean, distance?: number) => {
+  const handleLocationVerified = async (isValid: boolean, distance?: number, locationData?: any) => {
     if (isValid) {
       setAttendanceStatus('present');
-    } else if (distance && distance <= 1000) {
+      // Send email notification when attendance is marked
+      await sendAttendanceEmail();
+      toast({
+        title: "Attendance Email Sent",
+        description: "A confirmation email has been sent to your registered email address.",
+      });
+      
+      // In a real app, this would save to MongoDB via API
+      console.log("Making API call to mark attendance as present:", {
+        sessionId: session.id,
+        status: 'present',
+        locationData
+      });
+    } else if (distance && distance <= 100) {
       setAttendanceStatus('proxy');
+      
+      // In a real app, this would save to MongoDB via API
+      console.log("Making API call to mark attendance as proxy:", {
+        sessionId: session.id,
+        status: 'proxy',
+        locationData
+      });
     } else {
       setAttendanceStatus('absent');
+      
+      // In a real app, this would save to MongoDB via API
+      console.log("Making API call to mark attendance as absent:", {
+        sessionId: session.id,
+        status: 'absent',
+        locationData
+      });
     }
     setShowLocationCheck(false);
   };

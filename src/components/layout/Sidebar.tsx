@@ -60,6 +60,12 @@ const Sidebar = ({ userRole = 'student' }: SidebarProps) => {
       roles: ['admin']
     },
     { 
+      href: '/user-fields', 
+      label: 'User Fields', 
+      icon: <UserCog className="h-5 w-5" />,
+      roles: ['admin']
+    },
+    { 
       href: '/classes', 
       label: 'Classes', 
       icon: <BookOpen className="h-5 w-5" />,

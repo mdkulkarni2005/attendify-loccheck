@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -8,7 +9,8 @@ import {
   Users, 
   CheckSquare, 
   AlertTriangle, 
-  MapPin
+  MapPin,
+  FileText
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -102,10 +104,12 @@ const TeacherDashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>Today: {new Date().toLocaleDateString()}</span>
-          </Button>
+          <Link to="/timetable">
+            <Button className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span>View Timetable</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -280,18 +284,24 @@ const TeacherDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">
-                <Calendar className="mr-2 h-4 w-4" />
-                View Full Timetable
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="mr-2 h-4 w-4" />
-                Manage Classes
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <CheckSquare className="mr-2 h-4 w-4" />
-                View Attendance Records
-              </Button>
+              <Link to="/timetable" className="w-full">
+                <Button variant="outline" className="w-full justify-start">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  View Full Timetable
+                </Button>
+              </Link>
+              <Link to="/classes" className="w-full">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="mr-2 h-4 w-4" />
+                  Manage Classes
+                </Button>
+              </Link>
+              <Link to="/reports" className="w-full">
+                <Button variant="outline" className="w-full justify-start">
+                  <FileText className="mr-2 h-4 w-4" />
+                  View Attendance Reports
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -10,12 +10,14 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Attendance from "./pages/Attendance";
+import Timetable from "./pages/Timetable";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 import RouteGuard from "./components/auth/RouteGuard";
 import Users from "./pages/admin/Users";
 import Classes from "./pages/admin/Classes";
 import Reports from "./pages/admin/Reports";
+import UserFields from "./pages/admin/UserFields";
 import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
@@ -59,6 +61,16 @@ const App = () => (
             <Route path="/reports" element={
               <RouteGuard allowedRoles={['admin']}>
                 <Reports />
+              </RouteGuard>
+            } />
+            <Route path="/user-fields" element={
+              <RouteGuard allowedRoles={['admin']}>
+                <UserFields />
+              </RouteGuard>
+            } />
+            <Route path="/timetable" element={
+              <RouteGuard>
+                <Timetable />
               </RouteGuard>
             } />
             <Route path="/settings" element={

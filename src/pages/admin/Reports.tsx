@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 import OverallAttendanceTab from '@/components/reports/OverallAttendanceTab';
 import StudentAttendanceTab from '@/components/reports/StudentAttendanceTab';
 import ClassAttendanceTab from '@/components/reports/ClassAttendanceTab';
+import AttendanceReport from '@/components/reports/AttendanceReport';
 
 const Reports = () => {
   const { toast } = useToast();
@@ -90,10 +91,11 @@ const Reports = () => {
         </div>
         
         <Tabs defaultValue="attendance" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsList className="grid w-full max-w-md grid-cols-4">
             <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="students">Student</TabsTrigger>
             <TabsTrigger value="classes">Class</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced</TabsTrigger>
           </TabsList>
           
           <TabsContent value="attendance" className="space-y-4 mt-6">
@@ -122,6 +124,10 @@ const Reports = () => {
               studentData={studentData}
               onGenerateReport={handleGenerateReport}
             />
+          </TabsContent>
+          
+          <TabsContent value="advanced" className="space-y-4 mt-6">
+            <AttendanceReport />
           </TabsContent>
         </Tabs>
       </div>

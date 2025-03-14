@@ -81,7 +81,13 @@ const Attendance = () => {
             <AttendanceSession 
               session={activeSession} 
               isTeacher={userRole === 'teacher'}
-              onEndSession={() => console.log("End session")}
+              onEndSession={() => {
+                console.log("End session");
+                // Update the session status to completed
+                activeSession.status = 'completed';
+                // Show visual feedback
+                alert("Session ended successfully");
+              }}
             />
           </div>
 

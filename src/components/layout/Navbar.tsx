@@ -48,7 +48,7 @@ const Navbar = () => {
                 <span className="sr-only">Notifications</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-80">
+            <PopoverContent align="end" className="w-[calc(100vw-2rem)] sm:w-80">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">Notifications</h4>

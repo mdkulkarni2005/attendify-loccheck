@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import SearchInput from '@/components/ui/search-input';
 import ClassesList from '@/components/classes/ClassesList';
 import ClassManagementDialog from '@/components/classes/ClassManagementDialog';
+import AddClassDialog from '@/components/classes/AddClassDialog';
 import DepartmentFilter from '@/components/classes/DepartmentFilter';
 import TeacherFilter from '@/components/classes/TeacherFilter';
 import { ClassItem } from '@/types/classes';
@@ -32,6 +33,7 @@ const Classes = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedTeacher, setSelectedTeacher] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   useEffect(() => {
     let result = classes;
@@ -102,6 +104,22 @@ const Classes = () => {
       description: `Attendance session started for ${selectedClass?.name}`,
     });
   };
+  
+  const handleAddClass = (newClass: Omit<ClassItem, 'id'>) => {
+    const id = `class-${Date.now()}`;
+    const classToAdd: ClassItem = {
+      id,
+      ...newClass
+    };
+    
+    setClasses([...classes, classToAdd]);
+    setIsAddDialogOpen(false);
+    
+    toast({
+      title: "Class Added",
+      description: `${newClass.name} has been added successfully`,
+    });
+  };
 
   return (
     <MainLayout>
@@ -116,7 +134,7 @@ const Classes = () => {
               Manage classes, courses, and schedules
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsAddDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> Add New Class
           </Button>
         </div>
@@ -164,11 +182,26 @@ const Classes = () => {
         </Tabs>
       </div>
       
-      <Dialog>
+      {/* Dialog for managing existing class */}
+      <Dialog open={!!selectedClass} onOpenChange={(open) => !open && setSelectedClass(null)}>
         <ClassManagementDialog
           selectedClass={selectedClass}
-          onUpdateClass={handleUpdateClass}
-          onStartAttendance={handleStartAttendance}
+          onUpdateClass={() => {
+            handleUpdateClass();
+            setSelectedClass(null);
+          }}
+          onStartAttendance={() => {
+            handleStartAttendance();
+            setSelectedClass(null);
+          }}
+        />
+      </Dialog>
+      
+      {/* Dialog for adding new class */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <AddClassDialog 
+          onAddClass={handleAddClass}
+          onCancel={() => setIsAddDialogOpen(false)}
         />
       </Dialog>
     </MainLayout>

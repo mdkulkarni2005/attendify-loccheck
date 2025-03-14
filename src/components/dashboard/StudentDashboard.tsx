@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -9,7 +10,8 @@ import {
   XSquare,
   MapPin,
   AlertTriangle,
-  Loader2
+  Loader2,
+  ArrowRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -87,18 +89,30 @@ const StudentDashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>Today: {new Date().toLocaleDateString()}</span>
-          </Button>
+          <Link to="/timetable">
+            <Button className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span>View Timetable</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="md:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Today's Classes</CardTitle>
-            <CardDescription>Your classes for today</CardDescription>
+            <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-lg">Today's Classes</CardTitle>
+              <CardDescription>Your classes for today</CardDescription>
+            </div>
+            <Link to="/timetable">
+              <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                View Full Schedule
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
+          </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
